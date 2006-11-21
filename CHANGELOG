@@ -1,0 +1,22 @@
+0.4
+---
+Change user database creation to use less memory working around Windows XP issues.
+New database format which is *much* faster
+Add autotest for User::setId()
+
+0.3
+---
+Make the user database a compile time option.
+Tweak stdout progress messages
+
+0.2
+---
+Fix two 64 bit issues
+Fix windows compile issues
+A much faster User class
+More autotests
+
+0.1
+---
+Initial Release
+
