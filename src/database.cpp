@@ -266,12 +266,12 @@ bool DataBase::load() {
     // Basic sanity check
     Movie m(this, 1);
     if (!votesFileError && m.votes() != 547) {
-        qWarning() << "votes database error, possibly corrupt.  Expect movie" << m.id() << "to have 547 votes, but it only has:" << m.votes();
+        qWarning() << "votes database error, needs updating or possibly corrupt.  Expect movie" << m.id() << "to have 547 votes, but it only has:" << m.votes();
         munmap(storedvotes, votesFile->size());
         votesFileError = true;
     }
     if (!votesFileError && m.findScore(1488844) != 3) {
-        qWarning() << "votes database error, possibly corrupt.  Expect movie" << m.id() << "to have rank of 3:" << m.findScore(1488844) << "for user 1488844.";
+        qWarning() << "votes database error, needs updating or possibly corrupt.  Expect movie" << m.id() << "to have rank of 3:" << m.findScore(1488844) << "for user 1488844.";
         munmap(storedvotes, votesFile->size());
         votesFileError = true;
     }
