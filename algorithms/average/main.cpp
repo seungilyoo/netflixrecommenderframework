@@ -41,18 +41,15 @@ public:
     void setMovie(int id)
     {
         currentMovie.setId(id);
-        currentMovieAverage = -1;
+        int total = 0;
+        for (uint i = 0; i < currentMovie.votes(); ++i)
+            total += currentMovie.score(i);
+        currentMovieAverage = total / (double)currentMovie.votes();
     }
 
     double determine(int user)
     {
         Q_UNUSED(user);
-        if (currentMovieAverage == -1) {
-            currentMovieAverage = 0;
-            for (uint i = 0; i < currentMovie.votes(); ++i)
-                currentMovieAverage += currentMovie.score(i);
-            currentMovieAverage = currentMovieAverage / currentMovie.votes();
-        }
         return currentMovieAverage;
     }
 
