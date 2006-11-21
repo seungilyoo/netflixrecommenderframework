@@ -4,6 +4,8 @@ DESTDIR = ../../bin
 DEPENDPATH += .
 INCLUDEPATH += .
 #CONFIG += debug
+CONFIG -= app_bundle
+CONFIG += release
 
 # Input
 

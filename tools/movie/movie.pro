@@ -4,7 +4,9 @@ DESTDIR = ../../bin
 DEPENDPATH += .
 INCLUDEPATH += .
 QT = core
-CONFIG += debug
+CONFIG -= app_bundle
+CONFIG += release
+#CONFIG += debug
 # Input
 
 include(../../src/netflixresultsgenerator.pri)
