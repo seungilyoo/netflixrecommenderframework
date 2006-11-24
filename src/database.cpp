@@ -250,7 +250,8 @@ bool DataBase::load() {
     bool moviesFileError = ::load(moviesFile, &storedmovies);
     // Basic sanity check
     if (!moviesFileError && (storedmovies[0] != 0 || storedmovies[1] != 547)) {
-        qWarning() << "movie database error, possibly corrupt" << storedmovies[0];
+        qWarning() << "Movie database error, possibly corrupt.  Expected [0] to be 0, but it is:"
+                   << storedmovies[0] << "or expected [1] to be 547, but it is:" << storedmovies[1];
         munmap(storedmovies, moviesFile->size());
         moviesFileError = true;
     }
