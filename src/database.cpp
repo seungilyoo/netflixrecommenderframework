@@ -249,9 +249,9 @@ bool DataBase::load() {
     moviesFile = new QFile(movieFileName);
     bool moviesFileError = ::load(moviesFile, &storedmovies);
     // Basic sanity check
-    if (!moviesFileError && (storedmovies[0] != 0 || storedmovies[1] != 547)) {
+    if (!moviesFileError && (storedmovies[0] != 0 || (storedmovies[1] != 547 || storedmovies[1] != 524))) {
         qWarning() << "Movie database error, possibly corrupt.  Expected [0] to be 0, but it is:"
-                   << storedmovies[0] << "or expected [1] to be 547, but it is:" << storedmovies[1];
+                   << storedmovies[0] << "or expected [1] to be 547/524, but it is:" << storedmovies[1];
         munmap(storedmovies, moviesFile->size());
         moviesFileError = true;
     }
@@ -266,8 +266,8 @@ bool DataBase::load() {
     m_totalVotes  = votesFile->size() / 4;
     // Basic sanity check
     Movie m(this, 1);
-    if (!votesFileError && m.votes() != 547) {
-        qWarning() << "votes database error, needs updating or possibly corrupt.  Expect movie" << m.id() << "to have 547 votes, but it only has:" << m.votes();
+    if (!votesFileError && (m.votes() != 547 || m.votes() != 524)) {
+        qWarning() << "votes database error, needs updating or possibly corrupt.  Expect movie" << m.id() << "to have 547/524 votes, but it only has:" << m.votes();
         munmap(storedvotes, votesFile->size());
         votesFileError = true;
     }
