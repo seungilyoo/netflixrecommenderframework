@@ -30,15 +30,24 @@
 #define USER_H
 
 #include "database.h"
-
+#include <qdebug.h>
 class User {
 
 public:
     User(DataBase *db, int id = 0);
+
+    User(const User &otherUser);
+
     /*
         The first valid id is 6
     */
     void setId(int number);
+
+    /*
+        Sets this user to the next user
+        *warning* no validation is done to make sure there is a next user.
+    */
+    void next();
 
     inline int id() const { return m_id; }
     inline int votes() const { return m_size; }
@@ -59,7 +68,8 @@ private:
     DataBase *db;
     int m_id;
     uint offset;
-    int m_size;
+    uint indexOffset;
+    uint m_size;
 };
 
 #endif

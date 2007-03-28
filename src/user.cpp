@@ -30,6 +30,14 @@
 #include "binarysearch.h"
 #include <qdebug.h>
 
+User::User(const User &otherUser) : db(otherUser.db)
+, m_id(otherUser.m_id)
+, offset(otherUser.offset)
+, indexOffset(otherUser.indexOffset)
+, m_size(otherUser.m_size)
+{
+}
+
 User::User(DataBase *db, int id) : db(db) {
     setId(id);
 }
@@ -47,11 +55,26 @@ void User::setId(int number) {
         m_id = -1;
         m_size = 0;
         offset = 0;
+        indexOffset = 0;
         return;
     }
     m_id = number;
+    indexOffset = result;
     result += db->totalUsers();
     offset = db->storedUsersIndex[result];
     m_size = db->storedUsersIndex[result + 1] - db->storedUsersIndex[result];
+}
+
+void User::next() {
+    // grab pointer to the the array
+    // m_id = db->storedUsersIndex[++indexOffset];
+    uint *y = &(db->storedUsersIndex[++indexOffset]);
+    m_id = *y;
+    // which we can then just walk
+    //m_size = db->storedUsersIndex[result + 1] - db->storedUsersIndex[result];
+    uint *x = y + db->totalUsers() + 1;
+    m_size = (*x);
+    m_size -= (*(--x));
+    offset = *x;
 }
 
