@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (c) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,6 +57,8 @@ private slots:
     void user_data();
     void user();
 
+    void userNext_data();
+    void userNext();
 protected:
 
 };
@@ -248,6 +250,30 @@ void Test::user()
         int score = userObject.score(i);
         QCOMPARE(votes[movies.indexOf(movie)], score);
     }
+}
+
+void Test::userNext_data()
+{
+    QTest::addColumn<int>("start");
+    QTest::addColumn<int>("next");
+
+    QTest::newRow("default user") << 0 << 7;
+    QTest::newRow("first user") << 6 << 7;
+    QTest::newRow("first skip") << 8 << 10;
+    QTest::newRow("middle user") << 508 << 515;
+}
+
+void Test::userNext()
+{
+    
+    QFETCH(int, start);
+    QFETCH(int, next);
+    
+    DataBase db;
+    QVERIFY(db.load());
+    User user(&db, start);
+    user.next();
+    QCOMPARE(next, user.id());
 }
 
 
