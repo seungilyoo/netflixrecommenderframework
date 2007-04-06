@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "probe.h"
 #include <qvector.h>
 #include <qdebug.h>
+#include <qfileinfo.h>
 
 #ifdef Q_OS_WIN
 #include <winmmap.h>
@@ -37,8 +38,10 @@
 #endif
 
 #define PROBEFILENAME "probe"
+#define MAGICID 344
 
-bool Probe::readProbeData(const QString &probeFileName) {
+bool Probe::readProbeData(const QString &probeFileName)
+{
     QVector<uint> probeData;
     QFile data(probeFileName);
     if (!data.open(QFile::ReadOnly)) {
@@ -49,10 +52,11 @@ bool Probe::readProbeData(const QString &probeFileName) {
     uint movie = 0;
     QTextStream in(&data);
     QString line;
+    int count = 0;
     while (!in.atEnd()) {
         line = in.readLine();
         if (line.right(1) == ":") {
-            movie = line.mid(0, line.length()-1).toInt();
+            movie = line.mid(0, line.length() - 1).toInt();
             if (movie <= 0) {
                 qWarning() << "Error: Found movie with id 0 in probe file.";
                 return false;
@@ -76,9 +80,16 @@ bool Probe::readProbeData(const QString &probeFileName) {
             }
             probeData.append(user);
             probeData.append(realValue);
+            ++count;
         }
     }
-    DataBase::saveDatabase(probeData, db->rootPath() + "/" + PROBEFILENAME + ".data");
+
+    probeData.insert(0, count);
+    probeData.insert(0, MAGICID);
+
+    QFileInfo info(probeFileName);
+    QString binaryFileName = info.path() + "/" + info.completeBaseName() + QLatin1String(".data");
+    DataBase::saveDatabase(probeData, binaryFileName);
     qDebug() << "probe data saved to a database";
     return true;
 }
@@ -99,13 +110,13 @@ int Probe::runProbe(Algorithm *algorithm, const QString &probeFileName)
 
     QFile file(fileName + ".data");
     if (file.size() != 0
-        && file.exists()
-        && file.open(QFile::ReadOnly | QFile::Unbuffered)) {
+            && file.exists()
+            && file.open(QFile::ReadOnly | QFile::Unbuffered)) {
         probe = (uint*)
                 mmap(0, file.size(), PROT_READ, MAP_SHARED,
-                  file.handle(),
-                   (off_t)0);
-        if (probe == (uint*)-1) {
+                     file.handle(),
+                     (off_t)0);
+        if (probe == (uint*) - 1) {
             qWarning() << "probe mmap failed";
             return -1;
         }
@@ -116,10 +127,14 @@ int Probe::runProbe(Algorithm *algorithm, const QString &probeFileName)
     }
 
     RMSE rmse;
-    int total = 1408395;
+    if (probe[0] != MAGICID) {
+        qWarning() << "probe file is invalid, please remove" << "\"" + fileName + ".data\"" << "so a new one can be generated";
+        return -1;
+    }
+    int total = probe[1];
     int percentDone = 0;
     int currentMovie = -1;
-    for (uint i = 0; i < probeSize; ++i) {
+    for (uint i = 2; i < probeSize; ++i) {
         if (probe[i] == 0) {
             currentMovie = -1;
             continue;
@@ -135,7 +150,7 @@ int Probe::runProbe(Algorithm *algorithm, const QString &probeFileName)
         //if (guess != realValue)
         //    qDebug() << "movie:" << currentMovie << "user:" << user << "guess:" << guess << "correct:" << realValue;
         rmse.addPoint(realValue, guess);
-        int t = rmse.count() / (total/100);
+        int t = rmse.count() / (total / 100);
         if (t != percentDone) {
             percentDone = t;
             qDebug() << rmse.count() << percentDone << "%" << rmse.result();
