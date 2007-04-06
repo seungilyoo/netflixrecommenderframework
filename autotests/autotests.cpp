@@ -32,12 +32,9 @@
 #include "user.h"
 #include "rmse.h"
 
-class Test : public QObject {
-  Q_OBJECT
-
-public:
-    Test();
-    virtual ~Test();
+class Test : public QObject
+{
+    Q_OBJECT
 
 public Q_SLOTS:
     void init();
@@ -49,6 +46,7 @@ private slots:
 
     void movie_data();
     void movie();
+
     void noDataBaseMovie();
 
     void rmse_data();
@@ -59,30 +57,18 @@ private slots:
 
     void userNext_data();
     void userNext();
-protected:
-
 };
 
-Test::Test()
-{
-}
-
-Test::~Test()
-{
-}
-
 void Test::init()
-{
-}
+{}
 
 void Test::cleanup()
-{
-}
+{}
 
 void Test::dataBase()
 {
     DataBase db;
-    QCOMPARE(db.rootPath(), QString("../../"));
+    QCOMPARE(db.rootPath(), QLatin1String("../../"));
     QCOMPARE(db.isLoaded(), false);
     QVERIFY(db.totalVotes() == 0);
     QCOMPARE(db.load(), true);
@@ -93,8 +79,8 @@ void Test::dataBase()
 
 void Test::dabaBaseBadPath()
 {
-    DataBase db("X");
-    QCOMPARE(db.rootPath(), QString("X"));
+    DataBase db(QLatin1String("X"));
+    QCOMPARE(db.rootPath(), QLatin1String("X"));
     QCOMPARE(db.isLoaded(), false);
     QVERIFY(db.totalVotes() == 0);
     QCOMPARE(db.load(), false);
@@ -110,41 +96,59 @@ void Test::movie_data()
     QTest::addColumn<int>("user");
     QTest::addColumn<int>("score");
     // Check what should be the first vote in the file and basic validation
-    QTest::newRow("movie 1, first row") << 1 << 547
-                                        << 1488844 << 3;
-    QTest::newRow("movie 1, first row sorted") << 1 << 547
-                                               << 915 << 5;
-    QTest::newRow("movie 1, second row") << 1 << 547
-                                         << 822109 << 5;
-    QTest::newRow("movie 1, last row in movie file") << 1 << 547
-                                                     << 1815755 << 5;
-    QTest::newRow("movie 1, last row sorted") << 1 << 547
-                                              << 2647871 << 4;
-    QTest::newRow("movie 2, first row") << 2 << 145
-                                        << 2059652 << 4;
-    QTest::newRow("movie 2, last row") << 2 << 145
-                                       << 1272122 << 5;
+    QTest::newRow("movie 1, first row")
+    << 1 << 547
+    << 1488844 << 3;
+
+    QTest::newRow("movie 1, first row sorted")
+    << 1 << 547
+    << 915 << 5;
+
+    QTest::newRow("movie 1, second row")
+    << 1 << 547
+    << 822109 << 5;
+
+    QTest::newRow("movie 1, last row in movie file")
+    << 1 << 547
+    << 1815755 << 5;
+
+    QTest::newRow("movie 1, last row sorted")
+    << 1 << 547
+    << 2647871 << 4;
+
+    QTest::newRow("movie 2, first row")
+    << 2 << 145
+    << 2059652 << 4;
+
+    QTest::newRow("movie 2, last row")
+    << 2 << 145
+    << 1272122 << 5;
 
     // findVote if not returning a offseted value will be beyond the size of the file
-    QTest::newRow("movie 10001, user 27822") << 10001 << 158
-                                            << 27822 << 5;
+    QTest::newRow("movie 10001, user 27822")
+    << 10001 << 158
+    << 27822 << 5;
 
     // Last row isn't written correctly to the file
-    QTest::newRow("movie 17769, first row") << 17769 << 6749
-                                            << 1844276 << 1;
+    QTest::newRow("movie 17769, first row")
+    << 17769 << 6749
+    << 1844276 << 1;
 
-    QTest::newRow("movie 17770, first row") << 17770 << 921
-                                            << 2031561 << 2;
+    QTest::newRow("movie 17770, first row")
+    << 17770 << 921
+    << 2031561 << 2;
 
-    QTest::newRow("movie 17770, last row") << 17770 << 921
-                                            << 453585 << 2;
+    QTest::newRow("movie 17770, last row")
+    << 17770 << 921
+    << 453585 << 2;
 
-    QTest::newRow("movie 17770, last row sorted") << 17770 << 921
-                                                  << 2647066 << 2;
+    QTest::newRow("movie 17770, last row sorted")
+    << 17770 << 921
+    << 2647066 << 2;
 
-    QTest::newRow("movie 2843, first row sorted") << 2843 << 1455
-                                                  << 6 << 1;
-
+    QTest::newRow("movie 2843, first row sorted")
+    << 2843 << 1455
+    << 6 << 1;
 }
 
 void Test::movie()
@@ -178,19 +182,21 @@ Q_DECLARE_METATYPE(QList<double>)
 
 void Test::rmse_data()
 {
-    QTest::addColumn<QList<int> >("actual");
-    QTest::addColumn<QList<double> >("guess");
+    QTest::addColumn<QList<int> > ("actual");
+    QTest::addColumn<QList<double> > ("guess");
     QTest::addColumn<double>("result");
 
     // The example given in the tarball, result generated from running the perl script
-    QTest::newRow("Official") << (QList<int>()    << 2   << 3   << 4)
-                              << (QList<double>() << 3.2 << 3.1 << 5.0)
-                              << 0.903696;
+    QTest::newRow("Official")
+    << (QList<int>()    << 2   << 3   << 4)
+    << (QList<double>() << 3.2 << 3.1 << 5.0)
+    << 0.903696;
 
     // 0 check just to make sure
-    QTest::newRow("1 guess, 0") << (QList<int>()    << 0   << 0)
-                                << (QList<double>() << 0.0 << 0.0)
-                                << 0.0;
+    QTest::newRow("1 guess, 0")
+    << (QList<int>()    << 0   << 0)
+    << (QList<double>() << 0.0 << 0.0)
+    << 0.0;
 }
 
 void Test::rmse()
@@ -206,7 +212,6 @@ void Test::rmse()
     QCOMPARE(rmse.count(), guess.count());
     QCOMPARE(QString("%1").arg(rmse.result()), QString("%1").arg(result));
 }
-
 
 void Test::user_data()
 {
@@ -243,7 +248,7 @@ void Test::user()
     QCOMPARE(userObject.votes(), votes.count());
     userObject.setId(id);
     QCOMPARE(userObject.votes(), votes.count());
-    
+
     for (int i = 0; i < votes.count(); ++i) {
         int movie = userObject.movie(i);
         QVERIFY((bool)(movies.contains(movie)));
@@ -258,24 +263,22 @@ void Test::userNext_data()
     QTest::addColumn<int>("next");
 
     QTest::newRow("default user") << 0 << 7;
-    QTest::newRow("first user") << 6 << 7;
-    QTest::newRow("first skip") << 8 << 10;
-    QTest::newRow("middle user") << 508 << 515;
+    QTest::newRow("first user")   << 6 << 7;
+    QTest::newRow("first skip")   << 8 << 10;
+    QTest::newRow("middle user")  << 508 << 515;
 }
 
 void Test::userNext()
 {
-    
     QFETCH(int, start);
     QFETCH(int, next);
-    
+
     DataBase db;
     QVERIFY(db.load());
     User user(&db, start);
     user.next();
     QCOMPARE(next, user.id());
 }
-
 
 QTEST_MAIN(Test)
 #include "autotests.moc"
