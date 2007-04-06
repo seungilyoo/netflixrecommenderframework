@@ -17,11 +17,11 @@ Move this into the download/ directory after-which it should look like this
 download/qualifying.txt
 download/probe.txt
 download/training_set/
-download/netflixresultsgenerator/
+download/netflixrecommenderframework
 
 Go into the algorithms/average directory, run "qmake -recursive" to generate the Makefiles and then make.
 
-cd download/netflixresultsgenerator/algorithms/average
+cd download/netflixrecommenderframework/algorithms/average
 qmake -recursive
 make
 
@@ -49,7 +49,7 @@ user pass it a user id and it will output all the votes by that user in "movie,v
 The Code
 -------
 
-The cross platform toolkit Qt version 4 is used for the build system, test system, and basic file operations.  This allows for the code to be used on Windows, OS X, and Linux.  You can download the GPL version of their library at http://www.trolltech.com/ if you do not already have it on your system.  Feel free to use the existing build system or replace it with your own preferred.
+The cross platform toolkit Qt version 4 is used for the build system, test system, and basic file operations.  This allows for the code to be used on Windows, OS X, and Linux.  You can download the GPL version of their library at http://www.trolltech.com/ if you do not already have it on your system.
 
 This code is licensed under the BSD license.
 
