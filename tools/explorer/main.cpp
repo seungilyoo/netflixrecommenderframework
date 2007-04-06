@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006, Benjamin C. Meyer
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,15 +34,22 @@
 
 #include <QtGui/QtGui>
 
-class UserModel : public QAbstractTableModel {
+class UserModel : public QAbstractTableModel
+{
 
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    UserModel(DataBase *db, QObject * parent = 0) : QAbstractTableModel(parent), user(db) {
+    UserModel(DataBase *db, QObject * parent = 0) : QAbstractTableModel(parent), user(db)
+    {}
+    int rowCount(const QModelIndex &parent) const
+    {
+        return (parent.row() > 0) ? 0 : user.votes();
     }
-    int rowCount(const QModelIndex &parent) const { return (parent.row() > 0) ? 0 : user.votes(); }
-    int columnCount(const QModelIndex &) const { return 2; }
+    int columnCount(const QModelIndex &) const
+    {
+        return 2;
+    }
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const
     {
@@ -62,19 +69,20 @@ public:
         switch (role) {
         case Qt::DisplayRole:
         case Qt::EditRole: {
-            switch (index.column()) {
+                switch (index.column()) {
                 case 0: return user.movie(index.row());
                 case 1: return user.score(index.row());
+                }
+                return index.row();
+                break;
             }
-            return index.row();
-            break;
-        }
         case Qt::TextAlignmentRole:
             return Qt::AlignRight;
         }
         return QVariant();
     }
-    void setId(int id) {
+    void setId(int id)
+    {
         user.setId(id);
         reset();
     }
@@ -84,23 +92,28 @@ private:
 };
 
 
-class DBModel : public QAbstractTableModel {
+class DBModel : public QAbstractTableModel
+{
 
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    DBModel(QObject * parent = 0) : QAbstractTableModel(parent) {
+    DBModel(QObject * parent = 0) : QAbstractTableModel(parent)
+    {
         db = new DataBase();
         db->load();
     }
-    ~DBModel() {
+    ~DBModel()
+    {
         delete db;
     }
 
-    int rowCount(const QModelIndex &parent) const {
+    int rowCount(const QModelIndex &parent) const
+    {
         return (parent.row() > 0) ? 0 : db->totalVotes();
     }
-    int columnCount(const QModelIndex &parent) const {
+    int columnCount(const QModelIndex &parent) const
+    {
         Q_UNUSED(parent);
         return 3;
     }
@@ -124,16 +137,16 @@ public:
         switch (role) {
         case Qt::DisplayRole:
         case Qt::EditRole: {
-            Movie m = Movie::getMovie(db, index.row());
-            int v = index.row() - m.dataBaseOffset();
-            switch (index.column()) {
+                Movie m = Movie::getMovie(db, index.row());
+                int v = index.row() - m.dataBaseOffset();
+                switch (index.column()) {
                 case 0: return m.id();
                 case 1: return m.user(v);
                 case 2: return m.score(v);
+                }
+                return index.row();
+                break;
             }
-            return index.row();
-            break;
-        }
         case Qt::TextAlignmentRole:
             return Qt::AlignRight;
         }
@@ -143,12 +156,14 @@ public:
     DataBase *db;
 };
 
-class Window : public QWidget {
+class Window : public QWidget
+{
 
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    Window(QWidget *parent = 0) : QWidget(parent) {
+    Window(QWidget *parent = 0) : QWidget(parent)
+    {
         ui.setupUi(this);
 
         // Qt versions less then 4.2.2 will not handle the default 30px size very well
@@ -176,17 +191,22 @@ public:
         connect(ui.votes, SIGNAL(pressed(const QModelIndex &)), this, SLOT(changeUser(const QModelIndex &)));
         connect(ui.user, SIGNAL(pressed(const QModelIndex &)), this, SLOT(changeMovie(const QModelIndex &)));
     }
-    ~Window() { delete userModel; }
+    ~Window()
+    {
+        delete userModel;
+    }
 
 private slots:
-    void movieIdChanged(int newId) {
+    void movieIdChanged(int newId)
+    {
         Movie movie(db.db, newId);
         int row = movie.dataBaseOffset();
         QModelIndex idx = db.index(row, 0);
         ui.votes->scrollTo(idx, QAbstractItemView::PositionAtTop);
         ui.votes->setCurrentIndex(idx);
     }
-    void userIdChanged(int newId) {
+    void userIdChanged(int newId)
+    {
         userModel->setId(newId);
     }
     void changeMovie(const QModelIndex &index)

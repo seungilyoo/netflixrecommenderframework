@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,13 @@
     GenerateBetterProbe does both #1 and #2, once done delete the old database files
     and replace the probe.txt file.
 */
-class GenerateBetterProbe : public Algorithm {
+class GenerateBetterProbe : public Algorithm
+{
 public:
 
     GenerateBetterProbe(DataBase *db, const QString &newProbeFileName) :
-        Algorithm(), currentMovie(db) {
+            Algorithm(), currentMovie(db)
+    {
         newProbeFile = new QFile(newProbeFileName);
         if (!newProbeFile->open(QFile::WriteOnly)) {
             qWarning() << "unable to save" << newProbeFile->fileName();
@@ -52,7 +54,8 @@ public:
         stream = new QTextStream(newProbeFile);
     }
 
-    ~GenerateBetterProbe() {
+    ~GenerateBetterProbe()
+    {
         delete stream;
         delete newProbeFile;
         scrubbMovie();
@@ -76,9 +79,10 @@ public:
     /*!
         Remove users listed in the probe from the movie file
     */
-    void scrubbMovie() {
+    void scrubbMovie()
+    {
         QString fileName = QString(currentMovie.dataBase()->rootPath()
-                        + "/training_set/mv_%1").arg(currentMovie.id(), 7, 10, QChar('0'));
+                                   + "/training_set/mv_%1").arg(currentMovie.id(), 7, 10, QChar('0'));
         QFile movieFile(fileName + ".txt");
         QFile newMovieFile(fileName + ".new");
         if (movieFile.open(QFile::ReadOnly) && newMovieFile.open(QFile::WriteOnly)) {
