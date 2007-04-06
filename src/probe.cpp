@@ -37,8 +37,15 @@
 #include <sys/mman.h>
 #endif
 
-#define PROBEFILENAME "probe"
 #define MAGICID 344
+
+Probe::Probe(DataBase *db) : db(db), output(ProbeFile)
+{};
+
+void Probe::setOutput(Output type)
+{
+    output = type;
+}
 
 bool Probe::readProbeData(const QString &probeFileName)
 {
@@ -66,16 +73,24 @@ bool Probe::readProbeData(const QString &probeFileName)
         } else {
             int realValue = 0;
             int user = 0;
-            if (line[1] == ',') {
+            if (line[1] == ',' && QString(line[0]).toInt() < 6 ) {
+                // modified probe
                 realValue = QString(line[0]).toInt();
                 user = line.mid(2).toInt();
             } else {
-                user = line.toInt();
-                Movie m(db, movie);
-                realValue = m.findScore(user);
+                if (line.contains(",")) {
+                    // qualifing
+                    realValue = 0;
+                    user = line.mid(0, line.indexOf(",")).toInt();
+                } else {
+                    // default probe
+                    user = line.toInt();
+                    Movie m(db, movie);
+                    realValue = m.findScore(user);
+                }
             }
             if (user <= 0) {
-                qWarning() << "Error: Found user with id 0 in probe file.";
+                qWarning() << "Error: Found user with id 0 in probe file." << line << line.mid(0, line.indexOf(","));
                 return false;
             }
             probeData.append(user);
@@ -96,11 +111,13 @@ bool Probe::readProbeData(const QString &probeFileName)
 
 int Probe::runProbe(Algorithm *algorithm, const QString &probeFileName)
 {
-    QString fileName = probeFileName;
-    if (fileName.isEmpty())
-        fileName = db->rootPath() + "/" + PROBEFILENAME;
-    if (!db->isLoaded())
+    if (probeFileName.isEmpty() || !db->isLoaded())
         return -1;
+    
+    if (probeFileName == "qualifying")
+        output = SubmitionFile;
+
+    QString fileName = db->rootPath() + "/" + probeFileName;
     if (!QFile::exists(fileName + ".data"))
         if (!readProbeData(fileName + ".txt"))
             return -1;
@@ -142,22 +159,29 @@ int Probe::runProbe(Algorithm *algorithm, const QString &probeFileName)
         if (currentMovie == -1) {
             currentMovie = probe[i];
             algorithm->setMovie(currentMovie);
+            if (output == SubmitionFile)
+                printf("%d:\n", currentMovie);
             continue;
         }
         int user = probe[i++];
         int realValue = probe[i];
         double guess = algorithm->determine(user);
-        //if (guess != realValue)
-        //    qDebug() << "movie:" << currentMovie << "user:" << user << "guess:" << guess << "correct:" << realValue;
-        rmse.addPoint(realValue, guess);
-        int t = rmse.count() / (total / 100);
-        if (t != percentDone) {
-            percentDone = t;
-            qDebug() << rmse.count() << percentDone << "%" << rmse.result();
+        if (output == SubmitionFile) {
+            printf("%f\n", guess);
+        } else {
+            //if (guess != realValue)
+            //    qDebug() << "movie:" << currentMovie << "user:" << user << "guess:" << guess << "correct:" << realValue;
+            rmse.addPoint(realValue, guess);
+            int t = rmse.count() / (total / 100);
+            if (t != percentDone) {
+                percentDone = t;
+                qDebug() << rmse.count() << percentDone << "%" << rmse.result();
+            }
         }
     }
 
-    qDebug() << rmse.result();
+    if (output != SubmitionFile)
+        qDebug() << rmse.result();
     return 0;
 }
 

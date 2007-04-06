@@ -38,6 +38,7 @@
 
 class Algorithm
 {
+
 public:
     Algorithm()
     {}
@@ -51,13 +52,20 @@ class Probe
 {
 
 public:
-    Probe(DataBase *db) : db(db)
-    {};
-    int runProbe(Algorithm *algorithm, const QString &probeFileName = "");
+    enum Output
+    {
+        ProbeFile,
+        SubmitionFile
+    };
+
+    Probe(DataBase *db);
+    int runProbe(Algorithm *algorithm, const QString &probeFileName = "probe");
+    void setOutput(Output);
 
 private:
     bool readProbeData(const QString &probeFileName);
     DataBase *db;
+    Output output;
 };
 
 #endif
