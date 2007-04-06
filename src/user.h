@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,8 @@
 
 #include "database.h"
 #include <qdebug.h>
-class User {
+class User
+{
 
 public:
     User(DataBase *db, int id = 0);
@@ -49,20 +50,31 @@ public:
     */
     void next();
 
-    inline int id() const { return m_id; }
-    inline int votes() const { return m_size; }
+    inline int id() const
+    {
+        return m_id;
+    }
+    inline int votes() const
+    {
+        return m_size;
+    }
 
     int seenMovie(int id) const;
 
-    inline int movie(int x) const {
+    inline int movie(int x) const
+    {
         return DataBase::guser(db->storedUsers[offset + x]);
     }
 
-    inline int score(int x) const {
+    inline int score(int x) const
+    {
         return DataBase::gscore(db->storedUsers[offset + x]);
     }
 
-    inline DataBase *dataBase() const { return db; }
+    inline DataBase *dataBase() const
+    {
+        return db;
+    }
 
 private:
     DataBase *db;

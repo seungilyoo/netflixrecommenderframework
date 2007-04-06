@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,19 +40,25 @@
 class RMSE
 {
 public:
-    RMSE() : sumSquaredValues(0.0), numValues(0) {}
+    RMSE() : sumSquaredValues(0.0), numValues(0)
+    {}
 
-    inline void addPoint(int rating, double prediction) {
+    inline void addPoint(int rating, double prediction)
+    {
         ++numValues;
         double delta = rating - prediction;
         sumSquaredValues += delta * delta;
     }
 
-    inline double result() const {
+    inline double result() const
+    {
         return sqrt(sumSquaredValues / (double)numValues);
     }
 
-    inline int count() const { return numValues; }
+    inline int count() const
+    {
+        return numValues;
+    }
 
 private:
     double sumSquaredValues;

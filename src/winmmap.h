@@ -20,8 +20,8 @@
 #define MAP_FAILED      ((void *) -1)
 #endif
 
-void *mmap(char *,size_t,int,int,int,off_t);
-int   munmap(void *,size_t);
+void *mmap(char *, size_t, int, int, int, off_t);
+int   munmap(void *, size_t);
 #endif
 #endif
 

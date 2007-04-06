@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,29 +31,42 @@
 
 #include <database.h>
 
-class Movie {
+class Movie
+{
 
 public:
     Movie(DataBase *db, int number = 1);
     void setId(int number);
 
-    inline uint id() const { return m_id + 1; }
-    inline uint votes() const { return m_size; }
+    inline uint id() const
+    {
+        return m_id + 1;
+    }
+    inline uint votes() const
+    {
+        return m_size;
+    }
     int findVote(uint user) const;
 
-    inline int user(int x) const {
+    inline int user(int x) const
+    {
         return DataBase::guser(db->storedvotes[db->storedmovies[m_id] + x]);
     }
 
-    inline int score(int x) const {
+    inline int score(int x) const
+    {
         return DataBase::gscore(db->storedvotes[db->storedmovies[m_id] + x]);
     }
 
-    inline int findScore(uint user) const {
+    inline int findScore(uint user) const
+    {
         return score(findVote(user));
     }
 
-    inline DataBase *dataBase() const { return db; }
+    inline DataBase *dataBase() const
+    {
+        return db;
+    }
 
     /*!
         Return the movie that vote is cast upon
@@ -63,7 +76,10 @@ public:
     /*!
         Returns the offset for the votes in the votes DataBase array
     */
-    inline int dataBaseOffset() const { return db->storedmovies[m_id]; }
+    inline int dataBaseOffset() const
+    {
+        return db->storedmovies[m_id];
+    }
 
 private:
     DataBase *db;

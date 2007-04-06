@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,17 +44,17 @@
 #define MOVIESFILENAME "movies"
 
 DataBase::DataBase(const QString &rootPath) :
-    storedmovies(0),
-    storedvotes(0),
-    m_totalVotes(0),
-    storedUsers(0),
-    storedUsersIndex(0),
-    m_totalUsers(0),
-    moviesFile(0),
-    votesFile(0),
-    userFile(0),
-    userIndexFile(0),
-    m_rootPath(rootPath)
+        storedmovies(0),
+        storedvotes(0),
+        m_totalVotes(0),
+        storedUsers(0),
+        storedUsersIndex(0),
+        m_totalUsers(0),
+        moviesFile(0),
+        votesFile(0),
+        userFile(0),
+        userIndexFile(0),
+        m_rootPath(rootPath)
 {
     if (m_rootPath.isEmpty()) {
         QDir dir = QDir::current();
@@ -88,7 +88,8 @@ DataBase::~DataBase()
     }
 }
 
-QString DataBase::rootPath() const {
+QString DataBase::rootPath() const
+{
     return m_rootPath;
 }
 
@@ -108,7 +109,8 @@ bool userlessthan(const int &s1, const int &s2)
     return DataBase::guser(s1) < DataBase::guser(s2);
 }
 
-void DataBase::generateMovieDatabase() {
+void DataBase::generateMovieDatabase()
+{
     qDebug() << "Generating movie database..";
     QVector<uint> votesIndex;
     QVector<uint> votes;
@@ -149,9 +151,9 @@ void DataBase::generateMovieDatabase() {
         if (i != 17770) {
             votesIndex[i] = c;
         } else {
-        //    qDebug() << i << c << votes.count();
+            //qDebug() << i << c << votes.count();
         }
-        int t = i/(17770/100);
+        int t = i / (17770 / 100);
         if (t != percentDone && t % 5 == 0) {
             percentDone = t;
             qDebug() << fileName << percentDone << "%" << i << c;
@@ -165,7 +167,8 @@ void DataBase::generateMovieDatabase() {
     qDebug() << "Database cache files have been created.";
 }
 
-void DataBase::generateUserDatabase() {
+void DataBase::generateUserDatabase()
+{
     if (!isLoaded())
         return;
     qDebug() << "Generating user database...";
@@ -180,8 +183,8 @@ void DataBase::generateUserDatabase() {
         }
 
         // some debug stuff;
-        int t = i/(totalMovies()/100);
-        if (i % (totalMovies()/100) == 0 && t % 5 == 0)
+        int t = i / (totalMovies() / 100);
+        if (i % (totalMovies() / 100) == 0 && t % 5 == 0)
             qDebug() << t << "%";
     }
     qDebug() << "finshed initial sorting, sorting and saving...";
@@ -221,16 +224,17 @@ void DataBase::generateUserDatabase() {
     qDebug() << "Finished saving user database.";
 }
 
-bool load(QFile *file, uint **pointer) {
-   bool error = false;
-   if (file->size() != 0
-        && file->exists()
-        && file->open(QFile::ReadOnly | QFile::Unbuffered)) {
+bool load(QFile *file, uint **pointer)
+{
+    bool error = false;
+    if (file->size() != 0
+            && file->exists()
+            && file->open(QFile::ReadOnly | QFile::Unbuffered)) {
         *pointer = (uint*)
-                mmap(0, file->size(), PROT_READ, MAP_SHARED,
-                  file->handle(),
-                   (off_t)0);
-        if (*pointer == (uint*)-1) {
+                   mmap(0, file->size(), PROT_READ, MAP_SHARED,
+                        file->handle(),
+                        (off_t)0);
+        if (*pointer == (uint*) - 1) {
             qWarning() << "mmap failed" << file->fileName();
             error = true;
         }
@@ -241,7 +245,8 @@ bool load(QFile *file, uint **pointer) {
     return error;
 }
 
-bool DataBase::load() {
+bool DataBase::load()
+{
     QString movieFileName = rootPath() + "/" + MOVIESFILENAME + ".index";
     if (!QFile::exists(movieFileName))
         generateMovieDatabase();
@@ -251,7 +256,7 @@ bool DataBase::load() {
     // Basic sanity check
     if (!moviesFileError && (storedmovies[0] != 0 || (storedmovies[1] != 547 && storedmovies[1] != 524))) {
         qWarning() << "Movie database error, possibly corrupt.  Expected [0] to be 0, but it is:"
-                   << storedmovies[0] << "or expected [1] to be 547/524, but it is:" << storedmovies[1];
+        << storedmovies[0] << "or expected [1] to be 547/524, but it is:" << storedmovies[1];
         munmap(storedmovies, moviesFile->size());
         moviesFileError = true;
     }

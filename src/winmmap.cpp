@@ -21,54 +21,50 @@
 %
 %
 */
-void *mmap(char *address,size_t length,int protection,int access,
-  int file,off_t offset)
+void *mmap(char *address, size_t length, int protection, int access,
+           int file, off_t offset)
 {
-  void
+    void
     *map;
 
-  HANDLE
+    HANDLE
     handle;
 
-  map=(void *) NULL;
-  handle=INVALID_HANDLE_VALUE;
-  switch (protection)
-  {
+    map = (void *) NULL;
+    handle = INVALID_HANDLE_VALUE;
+    switch (protection) {
     case PROT_READ:
-    default:
-    {
-      handle=CreateFileMapping((HANDLE) _get_osfhandle(file),0,PAGE_READONLY,0,
-        length,0);
-      if (!handle)
+    default: {
+        handle = CreateFileMapping((HANDLE) _get_osfhandle(file), 0, PAGE_READONLY, 0,
+                                   length, 0);
+        if (!handle)
+            break;
+        map = (void *) MapViewOfFile(handle, FILE_MAP_READ, 0, 0, length);
+        CloseHandle(handle);
         break;
-      map=(void *) MapViewOfFile(handle,FILE_MAP_READ,0,0,length);
-      CloseHandle(handle);
-      break;
     }
-    case PROT_WRITE:
-    {
-      handle=CreateFileMapping((HANDLE) _get_osfhandle(file),0,PAGE_READWRITE,0,
-        length,0);
-      if (!handle)
+    case PROT_WRITE: {
+        handle = CreateFileMapping((HANDLE) _get_osfhandle(file), 0, PAGE_READWRITE, 0,
+                                   length, 0);
+        if (!handle)
+            break;
+        map = (void *) MapViewOfFile(handle, FILE_MAP_WRITE, 0, 0, length);
+        CloseHandle(handle);
         break;
-      map=(void *) MapViewOfFile(handle,FILE_MAP_WRITE,0,0,length);
-      CloseHandle(handle);
-      break;
     }
-    case PROT_READWRITE:
-    {
-      handle=CreateFileMapping((HANDLE) _get_osfhandle(file),0,PAGE_READWRITE,0,
-        length,0);
-      if (!handle)
+    case PROT_READWRITE: {
+        handle = CreateFileMapping((HANDLE) _get_osfhandle(file), 0, PAGE_READWRITE, 0,
+                                   length, 0);
+        if (!handle)
+            break;
+        map = (void *) MapViewOfFile(handle, FILE_MAP_ALL_ACCESS, 0, 0, length);
+        CloseHandle(handle);
         break;
-      map=(void *) MapViewOfFile(handle,FILE_MAP_ALL_ACCESS,0,0,length);
-      CloseHandle(handle);
-      break;
     }
-  }
-  if (map == (void *) NULL)
-    return((void *) MAP_FAILED);
-  return((void *) ((char *) map+offset));
+    }
+    if (map == (void *) NULL)
+        return((void *) MAP_FAILED);
+    return((void *) ((char *) map + offset));
 }
 
 /*
@@ -99,10 +95,10 @@ void *mmap(char *address,size_t length,int protection,int access,
 %
 %
 */
-int munmap(void *map,size_t length)
+int munmap(void *map, size_t length)
 {
-  if (!UnmapViewOfFile(map))
-    return(-1);
-  return(0);
+    if (!UnmapViewOfFile(map))
+        return(-1);
+    return(0);
 }
 

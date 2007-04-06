@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,18 +36,23 @@
 
 #include <qfile.h>
 
-class Algorithm {
+class Algorithm
+{
 public:
-    Algorithm() {}
-    virtual ~Algorithm() {}
+    Algorithm()
+    {}
+    virtual ~Algorithm()
+    {}
     virtual void setMovie(int) = 0;
     virtual double determine(int) = 0;
 };
 
-class Probe {
+class Probe
+{
 
 public:
-    Probe(DataBase *db) : db(db) {};
+    Probe(DataBase *db) : db(db)
+    {};
     int runProbe(Algorithm *algorithm, const QString &probeFileName = "");
 
 private:

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,26 +30,28 @@
 #include "binarysearch.h"
 #include <qdebug.h>
 
-User::User(const User &otherUser) : db(otherUser.db)
-, m_id(otherUser.m_id)
-, offset(otherUser.offset)
-, indexOffset(otherUser.indexOffset)
-, m_size(otherUser.m_size)
-{
-}
+User::User(const User &otherUser) : db(otherUser.db),
+        m_id(otherUser.m_id),
+        offset(otherUser.offset),
+        indexOffset(otherUser.indexOffset),
+        m_size(otherUser.m_size)
+{}
 
-User::User(DataBase *db, int id) : db(db) {
+User::User(DataBase *db, int id) : db(db)
+{
     setId(id);
 }
 
-int User::seenMovie(int id) const {
+int User::seenMovie(int id) const
+{
     uint r = userBinarySearch((db->storedUsers + offset), (uint)id, 0, m_size - 1);
     if (movie(r) == id)
         return score(r);
     return -1;
 }
 
-void User::setId(int number) {
+void User::setId(int number)
+{
     int result = db->mapUser(number);
     if (!db->isLoaded() || result == -1) {
         m_id = -1;
@@ -65,7 +67,8 @@ void User::setId(int number) {
     m_size = db->storedUsersIndex[result + 1] - db->storedUsersIndex[result];
 }
 
-void User::next() {
+void User::next()
+{
     // grab pointer to the the array
     // m_id = db->storedUsersIndex[++indexOffset];
     uint *y = &(db->storedUsersIndex[++indexOffset]);

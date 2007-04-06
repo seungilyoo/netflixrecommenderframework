@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,38 +48,57 @@
 */
 class DataBase
 {
-friend class Movie;
-friend class User;
+    friend class Movie;
+    friend class User;
 public:
     DataBase(const QString &rootPath = "");
     ~DataBase();
 
     bool load();
-    inline bool isLoaded() const { return (moviesFile != 0 && votesFile != 0); }
+    inline bool isLoaded() const
+    {
+        return (moviesFile != 0 && votesFile != 0);
+    }
     QString rootPath() const;
 
-    inline int totalUsers() const {
+    inline int totalUsers() const
+    {
         return m_totalUsers;
     }
-    inline int lastUser() const {
+    inline int lastUser() const
+    {
         return storedUsersIndex[totalUsers() - 1];
     }
-    inline int totalVotes() const {
+    inline int totalVotes() const
+    {
         return m_totalVotes;
     }
-    inline int totalMovies() const { return (isLoaded()) ? 17770 : 0; }
+    inline int totalMovies() const
+    {
+        return (isLoaded()) ? 17770 : 0;
+    }
 
     // functions to pull out the vote and user
-    static inline uint gscore(uint x) { return (x >> 29); }
-    static inline uint guser(uint x) { return ((x << 3) >> 3); }
+    static inline uint gscore(uint x)
+    {
+        return (x >> 29);
+    }
+    static inline uint guser(uint x)
+    {
+        return ((x << 3) >> 3);
+    }
 
     static void saveDatabase(const QVector<uint> &movies, const QString &fileName);
 
-    inline int mapUser(int user) const { return users.value(user, -1); }
+    inline int mapUser(int user) const
+    {
+        return users.value(user, -1);
+    }
 
 private:
-    inline int lastUserSize() const {
-        return userFile->size()/sizeof(uint) - storedUsersIndex[totalUsers()];
+    inline int lastUserSize() const
+    {
+        return userFile->size() / sizeof(uint) - storedUsersIndex[totalUsers()];
     }
 
     // For direct access by Movie and User Class

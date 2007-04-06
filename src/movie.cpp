@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,8 @@
 #include "movie.h"
 #include "binarysearch.h"
 
-Movie::Movie(DataBase *db, int number) : db(db), m_size(0), m_id(0) {
+Movie::Movie(DataBase *db, int number) : db(db), m_size(0), m_id(0)
+{
     totalMovies = db->totalMovies();
     if (!db->isLoaded()) {
         m_size = 0;
@@ -46,7 +47,8 @@ Movie::Movie(DataBase *db, int number) : db(db), m_size(0), m_id(0) {
 // #1 has 547
 // #2 has 145
 // number must be > 0
-void Movie::setId(int number) {
+void Movie::setId(int number)
+{
     m_id = (number - 1);
     if (number < totalMovies) {
         // Exploit the fact that we have an array rather then doing:
@@ -63,14 +65,16 @@ void Movie::setId(int number) {
     }
 }
 
-Movie Movie::getMovie(DataBase *db, uint vote) {
+Movie Movie::getMovie(DataBase *db, uint vote)
+{
     uint* i = qBinaryFind(db->storedmovies, (db->storedmovies + db->totalMovies() - 1), (uint)vote);
     uint movieId = (i - (db->storedmovies));
     // movie id's are offset 1
     return Movie(db, movieId + 1);
 }
 
-int Movie::findVote(uint user) const {
+int Movie::findVote(uint user) const
+{
     int start = db->storedmovies[m_id];
     int end = start + votes() - 1;
     int r = userBinarySearch(db->storedvotes, user, start, end);
