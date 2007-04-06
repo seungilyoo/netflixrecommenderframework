@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,11 +32,12 @@
 /**
     One of the basic algorithm is the average algorithm which takes
     the average of all the votes for a movie and guess's that for any user.
-
-*/
-class DoubleAverage : public Algorithm {
+ */
+class DoubleAverage : public Algorithm
+{
 public:
-    DoubleAverage(DataBase *db) : currentMovie(db), user(db), currentMovieAverage(-1) {}
+    DoubleAverage(DataBase *db) : currentMovie(db), user(db), currentMovieAverage(-1)
+    {}
 
     void setMovie(int id)
     {
