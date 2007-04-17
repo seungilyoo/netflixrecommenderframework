@@ -1,3 +1,12 @@
+0.5
+---
+Added SVD algorithm example.
+Added User::next() to very rapidly increment through all users.
+Enhanced Probe to output submission format.
+Tweaked error messages
+Check that Qt4's qmake is being used.
+Don't build bundles on mac
+
 0.4
 ---
 Change user database creation to use less memory working around Windows XP issues.
@@ -19,4 +28,3 @@ More autotests
 0.1
 ---
 Initial Release
-

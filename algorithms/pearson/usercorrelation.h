@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,8 @@
 #ifndef USERCORRELATION_H
 #define USERCORRELATION_H
 
-class UserCorrelation {
+class UserCorrelation
+{
 
 public:
     UserCorrelation();
@@ -41,18 +42,22 @@ public:
     double correlation(const User &user1, const User &user2) = 0;
 };
 
-class PearsonCorrelation {
+class PearsonCorrelation
+{
 public:
-    PearsonCorrelation : UserCorrelation(){}
+PearsonCorrelation : UserCorrelation()
+    {}
 
-    double mean(const QVector<int> &v) {
+    double mean(const QVector<int> &v)
+    {
         int t = 0;
         for (int i = 0; i < v.count(); ++i)
             t += v.at(i);
         return t / (double)v.count();
     }
 
-    double pearsonCorrelationCoefficient(const QVector<int> &x, const QVector<int> &y, int size) {
+    double pearsonCorrelationCoefficient(const QVector<int> &x, const QVector<int> &y, int size)
+    {
         double productOfDeviations = 0;
         double squareOfXDeviations = 0;
         double squareOfYDeviations = 0;
@@ -68,7 +73,8 @@ public:
         return productOfDeviations / sqrt(squareOfXDeviations * squareOfYDeviations);
     }
 
-    double correlation(const User &user1, const User &user2, ) {
+    double correlation(const User &user1, const User &user2, )
+    {
         QVector<int> a;
         QVector<int> b;
         int size = user1.votes() > user2.votes() ? user1.votes() : user2.votes();

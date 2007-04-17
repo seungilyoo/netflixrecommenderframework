@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2006 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,14 +39,16 @@
 #
 # It returns values in the range from -1.0 to 1.0
 */
-double mean(const QVector<int> &v, int size) {
+double mean(const QVector<int> &v, int size)
+{
     int t = 0;
     for (int i = 0; i < size; ++i)
         t += v.at(i);
     return t / (double)v.count();
 }
 
-double pearsonCorrelationCoefficient(const QVector<int> &x, const QVector<int> &y, int size) {
+double pearsonCorrelationCoefficient(const QVector<int> &x, const QVector<int> &y, int size)
+{
     double productOfDeviations = 0;
     double squareOfXDeviations = 0;
     double squareOfYDeviations = 0;
@@ -67,11 +69,16 @@ double pearsonCorrelationCoefficient(const QVector<int> &x, const QVector<int> &
     the average of all the votes for a movie and guess's that for any user.
 
 */
-bool first(const QPair<double,int> &a, const QPair<double,int> &b){ return a.first > b.first; };
-class Pearson : public Algorithm {
+bool first(const QPair<double, int> &a, const QPair<double, int> &b)
+{
+    return a.first > b.first;
+};
+class Pearson : public Algorithm
+{
 
 public:
-    Pearson(DataBase *db) : currentMovie(db), user(db) {
+    Pearson(DataBase *db) : currentMovie(db), user(db)
+    {
         currentUserVotes.fill(-1, db->totalVotes());
     }
 
@@ -130,7 +137,7 @@ public:
             total += movieUsers.at(i).second;
         if (i == 0)
             return 3;
-        return total/(double)i;
+        return total / (double)i;
     }
 
     QVector<int> currentUserVotes;
