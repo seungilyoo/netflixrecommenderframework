@@ -65,6 +65,6 @@ int main(int , char **)
     db.load();
     Average average(&db);
     Probe probe(&db);
-    return probe.runProbe(&average, "qualifying");
+    return probe.runProbe(&average);
 }
 
