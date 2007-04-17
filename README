@@ -35,6 +35,10 @@ If an algorithm you try isn't good enough and you are going to toss it out, if y
 
 There is a doubleaverage algorithm for you to look at that show some usage of the User class.
 
+Finally To run against the qualifying input pass the name "qualifying" to runProbe().
+
+probe.runProbe(&average, "qualifying");
+
 Included Tools
 ------
 
