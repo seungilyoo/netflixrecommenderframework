@@ -311,7 +311,7 @@ bool DataBase::load()
     }
     // Basic sanity check that the database is ok and as we expect it to be
     User user(this, 6);
-    if (user.votes() != 626 || user.movie(0) != 30) {
+    if ((user.votes() != 626 && user.votes() != 623) || user.movie(0) != 30) {
         qWarning() << "Expected " << m.id() << " movie(0) to be user 30, but it is actually:" << user.movie(0);
         qWarning() << "OR user database error, possibly corrupt.  Expected " << user.id() << "to have 626 votes, but it only has:" << user.votes();
         qWarning() << "Delete users.index and users.data and restart this app to regenerate updated files.";

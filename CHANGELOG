@@ -1,3 +1,7 @@
+0.5.1
+---
+Correctly validate scrubbed data
+
 0.5
 ---
 Added SVD algorithm example.
