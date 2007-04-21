@@ -28,6 +28,7 @@
 
 #include <probe.h>
 #include <user.h>
+#include <quickdatabase.h>
 
 #include <qdebug.h>
 #include <qvector.h>
@@ -77,9 +78,13 @@ class Pearson : public Algorithm
 {
 
 public:
-    Pearson(DataBase *db) : currentMovie(db), user(db)
+    Pearson(DataBase *db) : currentMovie(db), user(db), qdb(new QuickDatabase(db))
     {
-        currentUserVotes.fill(-1, db->totalVotes());
+    }
+    
+    ~Pearson()
+    {
+        delete qdb;
     }
 
     void setMovie(int id)
@@ -94,11 +99,7 @@ public:
         movieUsers.resize(currentMovie.votes());
         User otherUser(currentMovie.dataBase());
 
-        // populate for quick lookup (usually faster then seenMovie)
         int currentMovieId = currentMovie.id();
-        for (int i = 0; i < user.votes(); ++i)
-            currentUserVotes[user.movie(i)] = user.score(i);
-
         for (uint i = 0; i < currentMovie.votes(); ++i) {
             int nextUser = currentMovie.user(i);
             if (nextUser == userId)
@@ -112,14 +113,13 @@ public:
                 y.resize(userVotes);
             }
 
+            int userNumber = user.dataBase()->mapUser(user.id());
             for (int j = 0; j < userVotes; ++j) {
                 int movie = otherUser.movie(j);
                 if (movie == currentMovieId)
                     continue;
-                //int r = user.seenMovie(movie);
-                int r = currentUserVotes.at(movie);
-                if (r != -1) {
-                    x[c] = (r);
+                if (qdb->has(userNumber, movie)) {
+                    x[c] = (user.seenMovie(movie));
                     y[c] = (otherUser.score(j));
                     ++c;
                 }
@@ -140,8 +140,6 @@ public:
         return total / (double)i;
     }
 
-    QVector<int> currentUserVotes;
-
     QVector<int> x;
     QVector<int> y;
 
@@ -149,6 +147,7 @@ public:
 
     Movie currentMovie;
     User user;
+    QuickDatabase *qdb;
 };
 
 int main(int , char **)

@@ -27,10 +27,11 @@
  */
 
 #include <QtTest/QtTest>
-#include "database.h"
-#include "movie.h"
-#include "user.h"
-#include "rmse.h"
+#include <database.h>
+#include <movie.h>
+#include <user.h>
+#include <rmse.h>
+#include <quickdatabase.h>
 
 class Test : public QObject
 {
@@ -57,6 +58,8 @@ private slots:
 
     void userNext_data();
     void userNext();
+
+    void quickdatabase();
 };
 
 void Test::init()
@@ -278,6 +281,26 @@ void Test::userNext()
     User user(&db, start);
     user.next();
     QCOMPARE(next, user.id());
+}
+
+void Test::quickdatabase()
+{
+    DataBase db;
+    QVERIFY(db.load());
+    QuickDatabase iv(&db);
+
+    // Quick check a int overflow case
+    iv.has(479906, 252);
+
+    User user(&db, 6);
+    for (int i = 0; i < db.totalUsers(); i += db.totalUsers() / 10) {
+        int userNumber = db.mapUser(user.id());
+        for (int j = 0; j < db.totalMovies(); ++j) {
+            int m = user.seenMovie(j);
+            QVERIFY(iv.has(userNumber, j) == (m != -1));
+        }
+        user.next();
+    }
 }
 
 QTEST_MAIN(Test)

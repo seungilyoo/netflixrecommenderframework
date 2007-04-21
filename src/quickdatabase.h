@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,64 +26,46 @@
  * SUCH DAMAGE.
  */
 
-#ifndef USER_H
-#define USER_H
+#ifndef QUICKDATABASE_H
+#define QUICKDATABASE_H
 
 #include "database.h"
-#include <qdebug.h>
-class User
+
+/**
+    Provides a two dimentaional array of users by movies where each cell is 1 bit,
+    0 being a no vote
+    1 being a vote
+
+    This is an super fast alternative to using user.seen().  An althernative that
+    would use less ram, but not be as fast would be to use a hash.
+
+    Beware this uses a little over a GB of ram
+ */
+class QuickDatabase
 {
 
 public:
-    User(DataBase *db, int id = 0);
+    QuickDatabase(DataBase *db);
+    ~QuickDatabase();
 
-    User(const User &otherUser);
-
-    /*
-        The first valid id is 6
-    */
-    void setId(int number);
-
-    /*
-        Sets this user to the next user
-        *warning* no validation is done to make sure there is a next user.
-    */
-    void next();
-
-    inline int id() const
-    {
-        return m_id;
-    }
-
-    inline int votes() const
-    {
-        return m_size;
-    }
-
-    int seenMovie(int id) const;
-
-    inline int movie(int x) const
-    {
-        return DataBase::guser(db->storedUsers[offset + x]);
-    }
-
-    inline int score(int x) const
-    {
-        return DataBase::gscore(db->storedUsers[offset + x]);
-    }
-
-    inline DataBase *dataBase() const
-    {
-        return db;
-    }
+    inline bool has(uint user, uint movie);
 
 private:
-    DataBase *db;
-    int m_id;
-    uint offset;
-    uint indexOffset;
-    uint m_size;
+    char *buffer;
+
 };
 
-#endif
+/**
+    Returns true if user has voted on movie otherwise false.
+ */
+bool QuickDatabase::has(uint user, uint movie)
+{
+    uint location = (user * 17770 + movie) / 8;
+    uchar x = buffer[location];
+    if (x == 0)
+        return false;
+    uint offset = (user * 17770 + movie) - (location * 8);
+    return x & (1 << offset);
+}
 
+#endif

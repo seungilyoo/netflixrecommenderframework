@@ -6,8 +6,18 @@ error("Use the qmake include with Qt4, on Debian that is qmake-qt4");
 
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
-SOURCES += $$PWD/database.cpp $$PWD/movie.cpp $$PWD/probe.cpp $$PWD/user.cpp
-HEADERS += $$PWD/database.h $$PWD/movie.h $$probe.h $$PWD/rmse.h $$PWD/user.h
+SOURCES += database.cpp \
+	   movie.cpp \
+           probe.cpp \
+	   user.cpp \
+           quickdatabase.cpp
+
+HEADERS += database.h \
+           movie.h \
+           probe.h \
+           rmse.h \
+           user.h \
+           quickdatabase.h
 
 win32 {
     SOURCES += $$PWD/winmmap.cpp

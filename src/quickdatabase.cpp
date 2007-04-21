@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006-2007 Benjamin C. Meyer (ben at meyerhome dot net)
+ * Copyright (C) 2007 Benjamin C. Meyer (ben at meyerhome dot net)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,64 +26,40 @@
  * SUCH DAMAGE.
  */
 
-#ifndef USER_H
-#define USER_H
+#include "quickdatabase.h"
 
-#include "database.h"
-#include <qdebug.h>
-class User
+#include <user.h>
+
+QuickDatabase::QuickDatabase(DataBase *db)
 {
-
-public:
-    User(DataBase *db, int id = 0);
-
-    User(const User &otherUser);
-
-    /*
-        The first valid id is 6
-    */
-    void setId(int number);
-
-    /*
-        Sets this user to the next user
-        *warning* no validation is done to make sure there is a next user.
-    */
-    void next();
-
-    inline int id() const
-    {
-        return m_id;
+    double totalMovies = db->totalMovies();
+    double totalUsers = db->totalUsers();
+    size_t size = (totalMovies * totalUsers) / 8 + 1;
+    buffer = (char*) malloc (size);
+    if (buffer == NULL) {
+        qWarning() << "Unable to malloc memory";
+        buffer = 0;
+        return;
     }
 
-    inline int votes() const
-    {
-        return m_size;
+    User user(db, 6);
+    for (double i = 0;  i < totalUsers; ++i) {
+        for (int j = 0; j < user.votes(); ++j) {
+            int movie = user.movie(j);
+            int location = (i * totalMovies + movie) / 8;
+            int offset =  (i * totalMovies + movie) - (location * 8);
+            buffer[location] |= (1 << offset);
+        }
+        user.next();
+
+        int one = totalUsers / 10;
+        if ((int)i % one == 0 && i != 0)
+            printf("filling: %d%%\n", ((int)i / one * 10));
     }
+}
 
-    int seenMovie(int id) const;
-
-    inline int movie(int x) const
-    {
-        return DataBase::guser(db->storedUsers[offset + x]);
-    }
-
-    inline int score(int x) const
-    {
-        return DataBase::gscore(db->storedUsers[offset + x]);
-    }
-
-    inline DataBase *dataBase() const
-    {
-        return db;
-    }
-
-private:
-    DataBase *db;
-    int m_id;
-    uint offset;
-    uint indexOffset;
-    uint m_size;
-};
-
-#endif
+QuickDatabase::~QuickDatabase()
+{
+    free (buffer);
+}
 

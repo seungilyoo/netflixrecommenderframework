@@ -166,11 +166,14 @@ int Probe::runProbe(Algorithm *algorithm, const QString &probeFileName)
         int user = probe[i++];
         int realValue = probe[i];
         double guess = algorithm->determine(user);
+        if (i >= 300)
+            return 0;
+        
         if (output == SubmitionFile) {
             printf("%f\n", guess);
         } else {
-            //if (guess != realValue)
-            //    qDebug() << "movie:" << currentMovie << "user:" << user << "guess:" << guess << "correct:" << realValue;
+            if (guess != realValue)
+                qDebug() << i << "movie:" << currentMovie << "user:" << user << "guess:" << guess << "correct:" << realValue << rmse.result();;
             rmse.addPoint(realValue, guess);
             int t = rmse.count() / (total / 100);
             if (t != percentDone) {
