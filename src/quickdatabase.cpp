@@ -32,9 +32,9 @@
 
 QuickDatabase::QuickDatabase(DataBase *db)
 {
-    double totalMovies = db->totalMovies();
-    double totalUsers = db->totalUsers();
-    size_t size = (totalMovies * totalUsers) / 8 + 1;
+    int totalMovies = db->totalMovies();
+    int totalUsers = db->totalUsers();
+    size_t size = (size_t)(((double)totalMovies * totalUsers) / 8 + 1);
     buffer = (char*) malloc (size);
     if (buffer == NULL) {
         qWarning() << "Unable to malloc memory";
@@ -46,8 +46,8 @@ QuickDatabase::QuickDatabase(DataBase *db)
     for (double i = 0;  i < totalUsers; ++i) {
         for (int j = 0; j < user.votes(); ++j) {
             int movie = user.movie(j);
-            int location = (i * totalMovies + movie) / 8;
-            int offset =  (i * totalMovies + movie) - (location * 8);
+            int location = (int)((i * totalMovies + movie) / 8);
+            int offset = (int)((i * totalMovies + movie) - (location * 8));
             buffer[location] |= (1 << offset);
         }
         user.next();
